@@ -145,4 +145,22 @@ major만 좁혀서는 부족했고(T-002가 여전히 0.98로 major), moderate�
 
 zero-shot 확률은 보정된 값이 아닙니다. Gemma가 confidence 1.00을 남발하는 게 그 증거입니다. open-jev README도 같은 경고를 하고 있고, 정확한 confidence가 필요하면 `make features` / `make train`으로 라벨 데이터에 head를 학습시키라고 안내합니다. 이 예제에서는 criteria 문구 조정으로 충분했지만, 실제 운영이라면 그 단계가 필요할 겁니다.
 
-전체 코드와 샘플 티켓, 테스트는 https://github.com/jeonck/jev-local-sample 에 있습니다.
+## 덤: 이 삽질을 Claude Code 스킬로 남기기
+
+임계값보다 criteria 문구가 레버라는 것, Qwen 1.5B는 choice가 한 옵션으로 붕괴한다는 것, mlx-community Gemma는 로그인 없이 받아진다는 것 — 이런 건 코드에 안 남습니다. 다음 프로젝트에서 또 같은 삽질을 하게 되죠. 그래서 Claude Code 스킬로 정리했습니다.
+
+```
+$ git clone https://github.com/jeonck/jev-local-sample
+$ cp -r jev-local-sample/skills/jev-local ~/.claude/skills/
+```
+
+이후 Claude Code에서 "jev로 로그 분류하고 싶어", "open-jev 로컬에 띄워서 PR 라벨링", "확신 없으면 사람에게 넘기는 라우팅" 같은 말을 하면 자동으로 이 스킬이 잡힙니다. 스킬이 하는 일:
+
+- `assets/Makefile`을 프로젝트에 복사해 open-jev 세팅·서버 기동 (gemma-3-4b-it-4bit 기본)
+- `assets/client.py` 뼈대로 `judge()`/`decide()` 작성 — stdlib만, `TYPESAFE_BASE_URL`로 실제 API 전환 가능
+- 튜닝을 정해진 순서로: 원시 확률 출력 → criteria에 케이스 열거 → 그다음 임계값 → 그래도 안 되면 head 학습
+- 안전·금전 도메인이면 게이트 방향을 뒤집으라고(모델은 순서만, 판단은 항상 사람) 먼저 경고
+
+`references/tuning.md`에 이 글의 5번 실행 결과가 before/after로 그대로 들어 있어서, 다음에 비슷한 증상이 나오면 Claude가 그걸 보고 바로 criteria부터 손댑니다.
+
+전체 코드와 샘플 티켓, 테스트, 스킬은 https://github.com/jeonck/jev-local-sample 에 있습니다.
