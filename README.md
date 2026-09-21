@@ -39,6 +39,24 @@ make test     # 라우팅 규칙 단위 테스트 (서버 불필요)
 - `tickets.jsonl` — 샘플 티켓 10건(모호한 것, 복합 이슈, 안전 문제 포함).
 - `test_triage.py` — `decide()` 검증.
 
+## 실행 결과 (gemma-3-4b-it-4bit, 10건 ≈ 18초)
+
+```
+id     route     dept       conf  sev refund reason
+T-001  returns   returns    1.00 1.00 False
+T-002  shipping  shipping   1.00 1.04 False
+T-003  billing   billing    1.00 1.00 True
+T-004  technical technical  1.00 1.04 False
+T-005  human     billing    0.93 2.00 True   major severity
+T-006  shipping  shipping   1.00 0.01 False
+T-007  human     returns    0.32 0.05 False  low confidence
+T-008  billing   billing    1.00 1.01 False
+T-009  technical technical  1.00 1.00 False
+T-010  returns   returns    1.00 1.00 False
+```
+
+자동 처리 8/10. 사람 검토는 히터 발연·콘센트 녹음(T-005)과 빈 티켓 "hi"(T-007)뿐.
+
 ## 튜닝 노트
 
 레버는 임계값이 아니라 **criteria 문구**다. Gemma-3-4B는 부정적 티켓을 거의 전부 major(p≈0.98)로 밀어
