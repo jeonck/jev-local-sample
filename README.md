@@ -38,6 +38,7 @@ make test     # 라우팅 규칙 단위 테스트 (서버 불필요)
 - `triage.py` — stdlib만 사용. `judge()`가 `/v1/systemone` 호출, `decide()`가 라우팅 규칙.
 - `tickets.jsonl` — 샘플 티켓 10건(모호한 것, 복합 이슈, 안전 문제 포함).
 - `test_triage.py` — `decide()` 검증.
+- `skills/jev-local/` — 이 작업에서 얻은 세팅·튜닝 지식을 담은 Claude Code 스킬. `cp -r skills/jev-local ~/.claude/skills/`로 설치.
 - `blog/` — 이 예제를 정리한 [블로그 초안](blog/jev-triage-draft.md) (네이버 붙여넣기용 [HTML](blog/jev-triage-draft.html)).
 
 ## 실행 결과 (gemma-3-4b-it-4bit, 10건 ≈ 18초)
